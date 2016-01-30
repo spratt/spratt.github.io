@@ -8,5 +8,4 @@ url: "http://spratt.github.io/"
 google_analytics: 
 
 # Build settings
-markdown: kramdown
 paginate: 3
