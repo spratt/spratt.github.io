@@ -1,8 +1,8 @@
 <div class="post-header mb2">
   <a href="{{ post.url }}">
-    <h1 class="py2">{{ post.title }}</h1>
+    <h1 class="py2">{% if post.title %}{{ post.title }}{% else %}{{ page.title }}{% endif %}</h1>
   </a>
-  <span class="post-meta">{{ post.date | date: "%b %-d, %Y" }}</span>
+  <span class="post-meta">{% if post.date}}{{ post.date | date: "%b %-d, %Y" }}{% else %}{{ page.date | date: "%b %-d, %Y" }}{% endif %}</span>
 </div>
 
 <article class="post-content">
