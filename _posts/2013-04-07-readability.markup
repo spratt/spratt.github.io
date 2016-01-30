@@ -1,0 +1,15 @@
+---
+published: true
+title: Readability
+layout: post
+tags: [readability]
+---
+If you're reading this in a maximized browser on a wide-screen monitor, you may wonder why the margins are so big. The answer isn't that this page is optimized for small displays. In fact, I asked the same question of LaTeX margins and I found [an excellent answer on the LaTeX stackexchange](http://tex.stackexchange.com/questions/71172/why-are-default-latex-margins-so-big) that points out that the problem isn't large margins, but large paper with respect to optimal line length.
+
+[The Elements of Typographic Style Applied to the Web](http://www.webtypography.net/) states that [line lengths are optimally between 45 and 75 characters including spaces](http://www.webtypography.net/Rhythm_and_Proportion/Horizontal_Motion/2.1.2/). [Emil Ruder](http://en.wikipedia.org/wiki/Emil_Ruder) suggests 50-60 characters in his book, [Typographie](http://www.goodreads.com/book/show/67269.Typographie_). Emil goes on to say that [readers are energized when their eyes move from the end of one line to the beginning of the next](http://baymard.com/blog/line-length-readability), as long as it doesn't happen too frequently, and that this energy diminishes over the length of the line.
+
+[The Web Style Guide](http://webstyleguide.com/) claims that [research that reading slows as line lengths exceed the maximum width of about 12 words](http://webstyleguide.com/wsg3/7-page-design/6-page-width-line-length.html). With a space between each word and assuming 4 letters per word on average, this converts to about 12*4+11=59 characters per line.
+
+You can use [this bookmarklet](http://www.gbsheli.com/2009/04/wc-word-count-and-char-count.html) to check the number of characters on a line in your browser. As of this writing, line lengths on this blog tend to be around 71 characters.
+
+I would also like to take this opportunity to recommend [Readability](http://www.readability.com/) which converts any web page to a more readable version, and whose novel theme inspired the design of this blog.
