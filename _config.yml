@@ -1,19 +1,20 @@
 # Site settings
-title:        pr4tt.com
-email:        simon@pr4tt.com
-author:       Simon David Pratt
-description:  "Simon Pratt's blog"
-baseurl:      "http://spratt.github.io"
+title:         pr4tt.com
+email:         simon@pr4tt.com
+author:        Simon David Pratt
+description:   "Simon Pratt's blog"
+baseurl:       "http://spratt.github.io"
 google_analytics: 
 
 # Build settings
-paginate:     3
-markdown:     kramdown
-markdown_ext: "markdown,markup,mkdown,mkdn,mkd,md"
+paginate:      3
+paginate_path: "/archives/page:num/"
+markdown:      kramdown
+markdown_ext:  "markdown,markup,mkdown,mkdn,mkd,md"
 
 # Permalinks
-permalink:        pretty
-encoding:         UTF-8
+permalink:     pretty
+encoding:      UTF-8
 
 # Kramdown
 kramdown:  
