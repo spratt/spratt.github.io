@@ -1,5 +1,7 @@
 <div class="post-header mb2">
-  <h1 class="py2">{{ post.title }}</h1>
+  <a href="{{ post.url }}">
+    <h1 class="py2">{{ post.title }}</h1>
+  </a>
   <span class="post-meta">{{ post.date | date: "%b %-d, %Y" }}</span>
 </div>
 
