@@ -325,11 +325,6 @@ strong, .bold {
   padding-left: 2rem;
 }
 
-.py2 {
-  padding-top: 2rem;
-  padding-bottom: 2rem;
-}
-
 .p3 {
   padding: 3rem;
 }
@@ -356,10 +351,6 @@ strong, .bold {
 .py4 {
   padding-top: 4rem;
   padding-bottom: 4rem;
-}
-
-.p-responsive {
-  padding: 1.5rem;
 }
 
 .px-responsive {

@@ -231,7 +231,6 @@ h2,
 h3 {
   font-family: "Lato", 'Helvetica Neue', Helvetica, sans-serif;
   font-weight: 900;
-  margin-top: 3rem;
 }
 
 h4,
@@ -267,7 +266,6 @@ h6 {
   .h1,
   h1 {
     font-size: 3.25rem;
-    line-height: 4.5rem;
   }
 
   .h2,
@@ -314,7 +312,6 @@ h6 {
   .h1,
   h1 {
     font-size: 4.5rem;
-    line-height: 6rem;
   }
 
   .h2,
