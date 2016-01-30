@@ -1,0 +1,13 @@
+# Site settings
+title: pr4tt.com
+email: simon@pr4tt.com
+author: Simon David Pratt
+description: "Simon Pratt's blog"
+baseurl: "pr4tt.com"
+url: "http://pr4tt.com"
+google_analytics: 
+
+# Build settings
+markdown: kramdown
+permalink: pretty
+paginate: 3
