@@ -9,5 +9,4 @@ google_analytics:
 
 # Build settings
 markdown: kramdown
-permalink: pretty
 paginate: 3
