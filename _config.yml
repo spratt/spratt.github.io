@@ -9,3 +9,7 @@ google_analytics:
 # Build settings
 paginate:     3
 markdown:     kramdown
+
+# Kramdown
+kramdown:  
+  parse_block_html: true
