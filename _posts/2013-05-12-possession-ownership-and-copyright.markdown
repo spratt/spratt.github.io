@@ -1,5 +1,5 @@
 ---
-published: false
+published: true
 title: Possession, Ownership, and Copyright
 layout: post
 tags: [copyright]
@@ -26,7 +26,7 @@ While not arising naturally, ownership of any kind is useful. It would be imprac
 
 The protection of intellectual property by ancient societies was not codified in law, but by franchises or royal favours. Bugbee makes the distinction that these cases were works that were in the public domain being removed from the publi by some authority, as opposed to a creator depriving the public of something that did not previously exist.
 
-One of the first codified protections was by the Republic of Florence in 1421, wherein an architect was granted certain rights to an his invention of a barge with hoisting gear for carrying marble. This precedent was useful at least in that it incentivized creation of new works. This became known as the Florentine patent statute. Specifically, the statute protected the architects right to build the barge, not the idea itself.
+One of the first codified protections was by the Republic of Florence in 1421, wherein [an architect was granted certain rights to an his invention of a barge with hoisting gear for carrying marble](http://en.wikipedia.org/wiki/History_of_patent_law#Italy). This precedent was useful at least in that it incentivized creation of new works. This became known as the Florentine patent statute. Specifically, the statute protected the architects right to build the barge, not the idea itself.
 
 Literary works were unprotected until the Gutenberg printing press was invented in 1450, and even then few copyrights were granted.
 
@@ -36,8 +36,8 @@ The Statute of Anne shifted the protection from the ability to create an object 
 
 One fundamental question that must be asked is to what extent do creators have the right to be rewarded? Unquestionably, the creation of novel ideas benefits us all, but each protection we give creators is a right that we are taking from users.
 
-For example, the recently passed Canadian Copyright Modernization Act Bill C-11 extends many user rights to copyrighted work, but all of these rights are trumped by a digital lock on the work. Additionally, it is now illegal to break digital locks for any purpose, and it is illegal to distribute tools which might break digital locks. Is it really within the purview of protecting creators' rights to be rewarded to remove the right to distribute creations not in any way related to the creator's work?
+For example, the recently passed Canadian Copyright Modernization Act [Bill C-11](http://www.parl.gc.ca/HousePublications/Publication.aspx?Language=E&Mode=1&DocId=5697419&File=4) extends many user rights to copyrighted work, but all of these rights are trumped by a digital lock on the work. [Additionally, it is now illegal to break digital locks for any purpose, and it is illegal to distribute tools which might break digital locks.](http://www.mondaq.com/canada/x/186120/Copyright/Canadas+Copyright+Modernization+Act+Receives+Royal+Assent) Is it really within the purview of protecting creators' rights to be rewarded to remove the right to distribute creations not in any way related to the creator's work?
 
-In answering the question of rewarding creators, we must also answer the question: how much does copying of a work hurt a creator? Cory Doctrow argues that excessive copyright hurts creators. One of Doctrow's main points is that digital locks send the message that if you buy a work then it may be taken away at any time, but if you steal it you can keep it forever. In this sense, Doctrow is saying that digital locks prevent ownership of a copy of the work.
+In answering the question of rewarding creators, we must also answer the question: how much does copying of a work hurt a creator? Cory Doctrow argues that excessive copyright hurts creators. [One of Doctrow's main points is that digital locks send the message that if you buy a work then it may be taken away at any time, but if you steal it you can keep it forever.](https://www.eff.org/deeplinks/2009/04/doctorows-law) In this sense, Doctrow is saying that digital locks prevent ownership of a copy of the work.
 
 Doctrow's eponymous law states "anytime someone puts a lock on something you own, against your wishes, and doesn't give you the key, they're not doing it for your benefit."
