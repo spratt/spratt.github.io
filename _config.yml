@@ -16,8 +16,3 @@ markdown_ext:  "markdown,markup,mkdown,mkdn,mkd,md"
 # Permalinks
 permalink:     pretty
 encoding:      UTF-8
-
-# Kramdown
-kramdown:  
-  parse_block_html: true
-  input:            GFM
