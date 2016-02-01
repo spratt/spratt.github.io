@@ -22,7 +22,7 @@ html, body {
 }
 
 article img {
-  width: 100%;
+    float: right;
 }
 
 .site-wrap {
