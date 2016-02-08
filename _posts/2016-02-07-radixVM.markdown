@@ -1,0 +1,66 @@
+---
+published: true
+title: RadixVM
+layout: post
+tags: [OS, unix, virtual memory, mmap, munmap]
+---
+
+So far this blog has [investigated the virtual memory interface in POSIX](/2016/02/01/posix-memory-management/), and dived into [some of the details of how it's implemented in BSD](/2016/02/02/BSD-virtual-memory/).  Today, we'll look at the state of the art in academic virtual memory design, in particular a design called [RadixVM by Austin T. Clements, M. Frans Kaashoek, Nickolai Zeldovich at MIT's CSAIL](https://people.csail.mit.edu/nickolai/papers/clements-radixvm-2014-08-05.pdf).
+
+# Background
+
+Recall that virtual memory allows us to pretend that each process has exclusive access to a huge amount of (virtual) memory.  Each fixed-size page of this virtual address space is usually stored either resident in an equal-sized frame of physical memory, or swapped out to disk.  A process' operations on these virtual addresses are passed through a translation lookaside buffer (TLB) that caches the actual physical memory locations for each virtual page.  In the case where an entry for a page is not found in the TLB, a page table is consulted.  If the page is not presently loaded in physical memory (referred to as a page fault), it is loaded before continuing.  Finally, the TLB is updated with the address and the process continues operating in the virtual address space.
+
+These days, memory allocation such as a call to `malloc` is often handled by mapping an anonymous region in memory using an underlying call to `mmap`.  [One of the most well-known `malloc` implementations, `jemalloc`](http://www.canonware.com/jemalloc/), explicitly states in its documentation that [it prefers to call `mmap` over `sbrk`](http://www.canonware.com/download/jemalloc/jemalloc-latest/doc/jemalloc.html).  When such regions are unmapped, it's important to immediately flush their entries in the TLB otherwise a dangling pointer referring to that allocation may end up modifying a region of memory which was already reallocated.  This process is called a TLB shootdown.  When multiple threads of the same process are spread across multiple cores, and one thread unmaps the region, any core running threads from this process needs to have its TLB flushed.  This is called remote TLB shootdown.
+
+# Problem
+
+Unfortunately, most operating systems serialize calls to mmap and munmap (single lock per shared address space).  mmap and munmap should be perfectly parallelizable since they should be operating on different parts of the address space.
+
+Operating systems typically use balanced trees to keep track of mapped memory regions within a process' address space.  Linux uses red/black trees, FreeBSD uses splay trees, Solairs and Windows use AVL trees.  Since these data structures require rebalancing on insert and delete (to maintain O(log n) height), they use a single lock to serialize changes to the entire data structure.
+
+# RadixVM
+
+RadixVM attempts to solve this problem.  RadixVM has 3 novel parts: its radix-tree-based data structure for tracking mapped memory, its method of avoiding remote TLB shootdowns, and its memory-efficient distributed reference counting scheme.
+
+## Refcache: Reference Counting
+
+[Reference counting](https://en.wikipedia.org/wiki/Reference_counting) is a common form of memory management in which memory is automatically freed when the number of references to a memory region drops to zero.
+
+The RadixVM paper introduces a memory-efficient distributed reference counting scheme, called Refcache.  Roughly speaking, refcache counts references to a memory location across possibly many cores.  Refcache divides time into fixed-length epochs (the canonical implementation uses an epoch of length 10ms), and only frees unreferenced memory after its reference count has dropped to zero and remains at zero for an entire epoch.
+
+## Data Structure
+
+![](https://upload.wikimedia.org/wikipedia/commons/6/63/An_example_of_how_to_find_a_string_in_a_Patricia_trie.png)
+
+[Radix tree](https://en.wikipedia.org/wiki/Radix_tree) is a type of data structure better known as a prefix tree, or a trie.  This data structure is a tree for storing strings of characters from a set called the alphabet.  A string is represented as a leaf in the tree by its root to leaf path, each edge of which is labeled with a sequence of characters.  At each node along this path, the concatenation of the edges of the root to node path form a prefix shared by all children of this node.
+
+![](https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/X86_Paging_4K.svg/512px-X86_Paging_4K.svg.png)
+
+In the context of operating systems, we normally use a variant of a radix tree which is built on bit strings has fixed depth.  That is, each outgoing edge from a level has the same number of bits.  This is very commonly used to represent a hierarchical page table, indexed by a 32 or 64-bit word, whose first few bits are the index into the highest level page table, the next few bits are the index into the next-highest level page table, etc.
+
+RadixVM uses a data structure based on a radix tree, very similar to a typical page table, in which each level is indexed by 9 (or fewer) bits.  Unlike a typical page table, RadixVM's data structure stores a separate copy of the mapping metadata in the radix tree for each page in the mapped range.
+
+## Avoiding Remote TLB Shootdowns
+
+Each core has its own TLB, and the x86 architecture doesn't inform the kernel about its contents.  Therefore, most operating systems perform the simplest possible kind of TLB shootdown when memory is unmapped, which is to shootdown the TLB on every core.  To avoid remote TLB shootdowns, RadixVM uses a scheme that tracks which cores have what mappings, and only performs remote TLB shootdowns when necessary.
+
+## Implementation
+
+The authors learned in a previous paper about [a lock-free VM implementation called BonsaiVM](https://people.csail.mit.edu/nickolai/papers/clements-bonsai.pdf), that big operating systems like Linux have a high level of coupling between the VM system and other parts of the operating system.  This means that implementing a novel VM design can be a monumental task.  So instead, the authors chose to implement radixvm on xv6.  [xv6](https://pdos.csail.mit.edu/6.828/2014/xv6.html) is a recently rewritten variant of Unix v6 ported to modern hardware for academic use at MIT.
+
+## Performance
+
+The authors were able to compare the behavior of Metis, a single-server multithreaded MapReduce library running on RadixVM, Bonsai, and regular linux.  The Metis workload stresses concurrent `mmap`s and `pagefault`s, but not `munmap`s.  In their experiments, RadixVM and Bonsai (only with 8MB block sizes) scale very well.  Linux/64kb seems to peak at 10 cores before dropping off.  Linux/8MB and Bonsai/64kb drop off after 20 cores.
+
+Since most large, complex applications have been built around the traditional limitations of mmap and munmap, they don't allow for good measurements of improvements to mmap/munmap.  Thus, the authors were forced to rely on microbenchmarks to measure performance in other workloads.  According to these microbenchmarks on the workloads they tested, only RadixVM really scales.
+
+## Do we really need all 3 parts?
+
+One final interesting thing to note about RadixVM is that the authors consider very strongly whether all 3 parts of their design are necessary.  Of course, they determine that yes, all parts of their design are necessary.  But it is still good that they spent the time to explain why.
+
+# Attribution
+
+Patricia trie diagram by Saffles (Microsoft Visio) [CC BY-SA 3.0](http://creativecommons.org/licenses/by-sa/3.0), via Wikimedia Commons.
+
+Page table diagram by RokerHRO (eigene Arbeit / own work using Xfig.) [CC BY-SA 3.0](http://creativecommons.org/licenses/by-sa/3.0), via Wikimedia Commons.
