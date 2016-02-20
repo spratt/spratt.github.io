@@ -4,6 +4,8 @@ layout: default
 
 <div class="home">
 
+  {% include pagination.html %}
+
   <div class="posts">
     {% for post in paginator.posts %}
       <div class="post">
@@ -12,6 +14,7 @@ layout: default
           <h3 class="h2 post-title">{{ post.title }}</h3>
           <p class="post-summary">{{ post.summary }}</p>
         </a>
+        {{ post.content | strip_html | truncatewords:75 }}
       </div>
     {% endfor %}
   </div>
