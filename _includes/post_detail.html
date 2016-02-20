@@ -1,3 +1,11 @@
+<nav class="prev-next">
+  {% if post.previous.url %}<a class="prev" href="{{ post.previous.url }}">&lt; {{ post.previous.title }}</a>
+  {% else %}
+  <a class="prev"></a>
+  {% endif %}
+  {% if post.next.url %}<a class="next" href="{{ post.next.url }}">{{ post.next.title }} &gt;</a>{% endif %}
+</nav>
+
 <div class="post-header mb2">
   <a href="{{ post.url }}">
     <h1 class="py2">{% if page.title %}{{ page.title }}{% else %}{{ post.title }}{% endif %}</h1>
@@ -8,3 +16,11 @@
 <article class="post-content">
   {{ content }}
 </article>
+
+<nav class="prev-next">
+  {% if post.previous.url %}<a class="prev" href="{{ post.previous.url }}">&lt; {{ post.previous.title }}</a>
+  {% else %}
+  <a class="prev"></a>
+  {% endif %}
+  {% if post.next.url %}<a class="next" href="{{ post.next.url }}">{{ post.next.title }} &gt;</a>{% endif %}
+</nav>
