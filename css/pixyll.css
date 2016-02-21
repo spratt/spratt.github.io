@@ -39,8 +39,13 @@ html, body {
   height: 100%;
 }
 
+article p {
+    text-align: justify;
+}
+
 article img {
     float: right;
+    margin-left: 1em;
 }
 
 .site-wrap {
