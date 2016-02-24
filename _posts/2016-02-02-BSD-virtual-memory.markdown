@@ -218,6 +218,17 @@ uvm_mapanon(struct vm_map *map, vaddr_t *addr, vsize_t sz,
 	/* ... */
 
 	/*
+	 * Before grabbing the lock, allocate a map entry for later
+	 * use to ensure we don't wait for memory while holding the
+	 * vm_map_lock.
+	 */
+	new = uvm_mapent_alloc(map, flags);
+	if (new == NULL)
+		return(ENOMEM);
+	
+	/* ... */
+
+	/*
 	 * Create new entry.
 	 * first and last may be invalidated after this call.
 	 */
@@ -501,3 +512,7 @@ Whew.  That's a lot to unravel, so I'll leave it here for now.
 # References
 
 For the section on FreeBSD, I referred to ["The Design and Implementation of FreeBSD."](http://www.amazon.com/Design-Implementation-FreeBSD-Operating-Edition/dp/0321968972)  For the section on NetBSD and OpenBSD, I referred to Charles Cranor's dissertation ["Design and Implementation of the UVM Virtual Memory System."](http://chuck.cranor.org/p/diss.pdf)
+
+# Attribution
+
+The diagram for UVM's data structures comes from [Charles Craynor's paper at Usenix in 1999](http://usenix.org/legacy/publications/library/proceedings/usenix99/full_papers/cranor/cranor_html/index.html), of which there is also [a PDF version](https://www.usenix.org/event/usenix99/full_papers/cranor/cranor.pdf).
