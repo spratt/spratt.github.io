@@ -162,6 +162,45 @@ ENTRY(copyin)
 
 As unsatisfying as it is, I'm not really sure what this does.  It seems to copy byte-by-byte from user space to kernel space.  Does this mean that all of physical memory exists in the kernel's virtual address space, since assembly instructions act on virtual addresses?
 
+I'll go through line by line and add comments where necessary to try and explain what the assembly does.  The most helpful documentation I could find for gas or AT&T syntax x86-64 code was [Oracle's x86 assembly language reference manual](http://docs.oracle.com/cd/E26502_01/html/E28388/ennby.html#scrolltoc), which documents the solaris assembler, which is very similar to gas.  Another useful resource was [the x86 assembly wikibook on shift and rotate](https://en.wikibooks.org/wiki/X86_Assembly/Shift_and_Rotate) and [the x86 instruction set reference on MOVS](http://x86.renejeschke.de/html/file_module_x86_id_203.html).
+
+{% highlight asm %}
+ENTRY(copyin)
+	DEFERRED_SWITCH_CHECK
+
+	/* the 'q' suffix after an instruction indicates that the instruction
+	 * works on a "quadword" or 64- bits
+	 */
+
+	xchgq	%rdi,%rsi		/* Exchange rdi, rsi */
+	movq	%rdx,%rax		/* Move rdx into rax */
+
+	addq	%rsi,%rdx		/* add rsi to rdx */
+	jc	_C_LABEL(copy_efault)	/* jump if carry bit set after prev. */
+					/* instruction */
+	movq	$VM_MAXUSER_ADDRESS,%r8	/* move the max user address into r8 */
+	cmpq	%r8,%rdx			/* compare r8 and rdx */
+	ja	_C_LABEL(copy_efault)	/* jump if r8 is above rdx */
+
+.Lcopyin_start:
+3:	/* bcopy(%rsi, %rdi, %rax); */
+	movq	%rax,%rcx	/* move rax to rcx */
+	shrq	$3,%rcx		/* shift rcx right by 3 bits */
+	rep			/* repeat the following until rcx is 0 ... */
+	movsq			/* move quadword from rsi to rdi */
+	movb	%al,%cl		/* move byte from al to cl */
+	andb	$7,%cl		/* logical AND bytes 7 and cl */
+	rep			/* repeat the following until rcx is 0 ... */
+	movsb			/* move byte from rsi to rdi */
+.Lcopyin_end:
+	xorl	%eax,%eax	/* logical XOR long (32 bit) eax with itself */
+				/* effectively, zero out eax */
+	ret
+	DEFERRED_SWITCH_CALL
+{% endhighlight %}
+
+It certainly copies bytes around, using `rep movsq`, but it's still not clear how the kernel indexes into user space without mapping all of physical memory into its address space.
+
 ## Dead queue (OpenBSD versus NetBSD)
 
 I've mostly been studying UVM since I began to study virtual memory.  When I began, I assumed that OpenBSD was mostly still running a VM system that was based on Cranor's UVM.  However, it seems that OpenBSD's VM system was substantially rewritten in 2011 by Ariane van der Steldt.
