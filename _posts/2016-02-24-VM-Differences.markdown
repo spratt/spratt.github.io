@@ -1,5 +1,5 @@
 ---
-published: false
+published: true
 title: Virtual Memory Differences
 layout: post
 tags: [OS, unix, BSD, memory, virtual memory, linux, solaris, sunos, openindiana]
@@ -34,6 +34,10 @@ When OpenBSD's kernel runs out of memory, it simply panics.  I think the same is
 Linux infamously has an Out-Of-Memory (OOM) killer.  This is a heuristic that runs when the kernel runs out of memory, and decides on a process to kill in order to free up memory.
 
 ## Copy-on-write mechanisms
+
+In UVM, copy-on-write simply creates a read-only reference to a backing `uvm_object`.  When written to, UVM creates an anonymous map, and copies the `uvm_object`'s data into the anonymous map.  (See page 51 of [Cranor's dissertation](http://chuck.cranor.org/p/diss.pdf).)
+
+This simplifies the original VM system, which used chains of copy/shadow objects which could get arbitrarily long.
 
 ## How the kernel accesses user memory
 
@@ -121,14 +125,39 @@ dofileread(int fd, struct file *fp, void *buf, size_t nbyte,
 }
 {% endhighlight %}
 
-Actually, I think that the `SCARGS()` macro uses something like linux's `copy_from_user()` function, whose equivalent is [`copyin()` in NetBSD](http://nixdoc.net/man-pages/NetBSD/man9/copyout.9.html).  So the next step is to find where `SCARGS()` and `copyin()` are defined.
+Actually, I think that the `SCARGS()` macro uses something like linux's `copy_from_user()` function, whose equivalent is [`copyin()` in NetBSD](http://netbsd.gw.com/cgi-bin/man-cgi?copyin+9+NetBSD-current).
 
-[Chuck Silvers' UBC paper](https://www.usenix.org/legacy/event/usenix2000/freenix/full_papers/silvers/silvers_html/) states the intention to implement `copyin()`/`copyout()` using UVM page loans.  Can't tell yet if this was implemented.
+[Chuck Silvers' UBC paper](https://www.usenix.org/legacy/event/usenix2000/freenix/full_papers/silvers/silvers_html/) states the intention to implement `copyin()`/`copyout()` using UVM page loans, but this doesn't seem to be implemented.
 
-{% highlight C %}
-{% endhighlight %}
+It turns out, the implementation for `copyin()` is hardware-dependent since it is related to how pmap actually stores the memory.  The x86-64 implementation is in [`src/sys/arch/amd64/amd64/copy.S`](http://cvsweb.netbsd.org/bsdweb.cgi/src/sys/arch/amd64/amd64/copy.S?rev=1.20&content-type=text/x-cvsweb-markup&only_with_tag=MAIN):
 
-{% highlight C %}
+{% highlight asm %}
+ENTRY(copyin)
+	DEFERRED_SWITCH_CHECK
+
+	xchgq	%rdi,%rsi
+	movq	%rdx,%rax
+
+	addq	%rsi,%rdx		/* check source address not wrapped */
+	jc	_C_LABEL(copy_efault)
+	movq	$VM_MAXUSER_ADDRESS,%r8
+	cmpq	%r8,%rdx
+	ja	_C_LABEL(copy_efault)	/* j if end in kernel space */
+
+.Lcopyin_start:
+3:	/* bcopy(%rsi, %rdi, %rax); */
+	movq	%rax,%rcx
+	shrq	$3,%rcx
+	rep
+	movsq
+	movb	%al,%cl
+	andb	$7,%cl
+	rep
+	movsb
+.Lcopyin_end:
+	xorl	%eax,%eax
+	ret
+	DEFERRED_SWITCH_CALL
 {% endhighlight %}
 
 ## Dead queue (OpenBSD versus NetBSD)

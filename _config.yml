@@ -4,7 +4,8 @@ email:         simon@pr4tt.com
 author:        Simon David Pratt
 description:   "Simon Pratt's blog"
 url:           "http://blog.pr4tt.com"
-google_analytics: 
+google_analytics:
+highlighter: pygments
 
 # Build settings
 gems: [jekyll-paginate]
