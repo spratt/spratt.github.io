@@ -160,6 +160,8 @@ ENTRY(copyin)
 	DEFERRED_SWITCH_CALL
 {% endhighlight %}
 
+As unsatisfying as it is, I'm not really sure what this does.  It seems to copy byte-by-byte from user space to kernel space.
+
 ## Dead queue (OpenBSD versus NetBSD)
 
 I've mostly been studying UVM since I began to study virtual memory.  When I began, I assumed that OpenBSD was mostly still running a VM system that was based on Cranor's UVM.  However, it seems that OpenBSD's VM system was substantially rewritten in 2011 by Ariane van der Steldt.
