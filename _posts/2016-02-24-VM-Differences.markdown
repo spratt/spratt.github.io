@@ -160,7 +160,7 @@ ENTRY(copyin)
 	DEFERRED_SWITCH_CALL
 {% endhighlight %}
 
-As unsatisfying as it is, I'm not really sure what this does.  It seems to copy byte-by-byte from user space to kernel space.
+As unsatisfying as it is, I'm not really sure what this does.  It seems to copy byte-by-byte from user space to kernel space.  Does this mean that all of physical memory exists in the kernel's virtual address space, since assembly instructions act on virtual addresses?
 
 ## Dead queue (OpenBSD versus NetBSD)
 
