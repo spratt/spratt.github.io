@@ -1,5 +1,5 @@
 ---
-published: false
+published: true
 title: Virtual Memory Differences
 layout: post
 tags: [OS, unix, BSD, memory, virtual memory, linux, solaris, sunos, openindiana]
@@ -34,6 +34,10 @@ When OpenBSD's kernel runs out of memory, it simply panics.  I think the same is
 Linux infamously has an Out-Of-Memory (OOM) killer.  This is a heuristic that runs when the kernel runs out of memory, and decides on a process to kill in order to free up memory.
 
 ## Copy-on-write mechanisms
+
+In UVM, copy-on-write simply creates a read-only reference to a backing `uvm_object`.  When written to, UVM creates an anonymous map, and copies the `uvm_object`'s data into the anonymous map.  (See page 51 of [Cranor's dissertation](http://chuck.cranor.org/p/diss.pdf).)
+
+This simplifies the original VM system, which used chains of copy/shadow objects which could get arbitrarily long.
 
 ## How the kernel accesses user memory
 
@@ -121,15 +125,81 @@ dofileread(int fd, struct file *fp, void *buf, size_t nbyte,
 }
 {% endhighlight %}
 
-Actually, I think that the `SCARGS()` macro uses something like linux's `copy_from_user()` function, whose equivalent is [`copyin()` in NetBSD](http://nixdoc.net/man-pages/NetBSD/man9/copyout.9.html).  So the next step is to find where `SCARGS()` and `copyin()` are defined.
+Actually, I think that the `SCARGS()` macro uses something like linux's `copy_from_user()` function, whose equivalent is [`copyin()` in NetBSD](http://netbsd.gw.com/cgi-bin/man-cgi?copyin+9+NetBSD-current).
 
-[Chuck Silvers' UBC paper](https://www.usenix.org/legacy/event/usenix2000/freenix/full_papers/silvers/silvers_html/) states the intention to implement `copyin()`/`copyout()` using UVM page loans.  Can't tell yet if this was implemented.
+[Chuck Silvers' UBC paper](https://www.usenix.org/legacy/event/usenix2000/freenix/full_papers/silvers/silvers_html/) states the intention to implement `copyin()`/`copyout()` using UVM page loans, but this doesn't seem to be implemented.
 
-{% highlight C %}
+It turns out, the implementation for `copyin()` is hardware-dependent since it is related to how pmap actually stores the memory.  The x86-64 implementation is in [`src/sys/arch/amd64/amd64/copy.S`](http://cvsweb.netbsd.org/bsdweb.cgi/src/sys/arch/amd64/amd64/copy.S?rev=1.20&content-type=text/x-cvsweb-markup&only_with_tag=MAIN):
+
+{% highlight asm %}
+ENTRY(copyin)
+	DEFERRED_SWITCH_CHECK
+
+	xchgq	%rdi,%rsi
+	movq	%rdx,%rax
+
+	addq	%rsi,%rdx		/* check source address not wrapped */
+	jc	_C_LABEL(copy_efault)
+	movq	$VM_MAXUSER_ADDRESS,%r8
+	cmpq	%r8,%rdx
+	ja	_C_LABEL(copy_efault)	/* j if end in kernel space */
+
+.Lcopyin_start:
+3:	/* bcopy(%rsi, %rdi, %rax); */
+	movq	%rax,%rcx
+	shrq	$3,%rcx
+	rep
+	movsq
+	movb	%al,%cl
+	andb	$7,%cl
+	rep
+	movsb
+.Lcopyin_end:
+	xorl	%eax,%eax
+	ret
+	DEFERRED_SWITCH_CALL
 {% endhighlight %}
 
-{% highlight C %}
+As unsatisfying as it is, I'm not really sure what this does.  It seems to copy byte-by-byte from user space to kernel space.  Does this mean that all of physical memory exists in the kernel's virtual address space, since assembly instructions act on virtual addresses?
+
+I'll go through line by line and add comments where necessary to try and explain what the assembly does.  The most helpful documentation I could find for gas or AT&T syntax x86-64 code was [Oracle's x86 assembly language reference manual](http://docs.oracle.com/cd/E26502_01/html/E28388/ennby.html#scrolltoc), which documents the solaris assembler, which is very similar to gas.  Another useful resource was [the x86 assembly wikibook on shift and rotate](https://en.wikibooks.org/wiki/X86_Assembly/Shift_and_Rotate) and [the x86 instruction set reference on MOVS](http://x86.renejeschke.de/html/file_module_x86_id_203.html).
+
+{% highlight asm %}
+ENTRY(copyin)
+	DEFERRED_SWITCH_CHECK
+
+	/* the 'q' suffix after an instruction indicates that the instruction
+	 * works on a "quadword" or 64- bits
+	 */
+
+	xchgq	%rdi,%rsi		/* Exchange rdi, rsi */
+	movq	%rdx,%rax		/* Move rdx into rax */
+
+	addq	%rsi,%rdx		/* add rsi to rdx */
+	jc	_C_LABEL(copy_efault)	/* jump if carry bit set after prev. */
+					/* instruction */
+	movq	$VM_MAXUSER_ADDRESS,%r8	/* move the max user address into r8 */
+	cmpq	%r8,%rdx			/* compare r8 and rdx */
+	ja	_C_LABEL(copy_efault)	/* jump if r8 is above rdx */
+
+.Lcopyin_start:
+3:	/* bcopy(%rsi, %rdi, %rax); */
+	movq	%rax,%rcx	/* move rax to rcx */
+	shrq	$3,%rcx		/* shift rcx right by 3 bits */
+	rep			/* repeat the following until rcx is 0 ... */
+	movsq			/* move quadword from rsi to rdi */
+	movb	%al,%cl		/* move byte from al to cl */
+	andb	$7,%cl		/* logical AND bytes 7 and cl */
+	rep			/* repeat the following until rcx is 0 ... */
+	movsb			/* move byte from rsi to rdi */
+.Lcopyin_end:
+	xorl	%eax,%eax	/* logical XOR long (32 bit) eax with itself */
+				/* effectively, zero out eax */
+	ret
+	DEFERRED_SWITCH_CALL
 {% endhighlight %}
+
+It certainly copies bytes around, using `rep movsq`, but it's still not clear how the kernel indexes into user space without mapping all of physical memory into its address space.
 
 ## Dead queue (OpenBSD versus NetBSD)
 
