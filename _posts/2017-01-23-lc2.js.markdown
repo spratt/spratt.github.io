@@ -1,19 +1,15 @@
 ---
-published: false
+published: true
 title: lc2.js - an LC-2 Simulator in JS
 layout: post
 tags: [OS, unix, BSD, memory, virtual memory, linux, solaris, sunos, openindiana]
 ---
 
-The book "Introduction to Computing Systems: from Bits & Gates to C & Beyond" introduces in some detail a computer called LC-2.  This computer never physically existed, but the publisher's website includes [Windows and Unix versions of a simulator for the computer](http://www.mhhe.com/engcs/compsci/patt/lc2unix.mhtml).  Naturally, I felt that a JavaScript version was necessary.  And so I built [lc2.js](http://blog.pr4tt.com/lc2.js).
-
-# A Live Example
-
-An example, live?
+The book "Introduction to Computing Systems: from Bits & Gates to C & Beyond" introduces in some detail a computer called LC-2.  This computer never physically existed, but the publisher's website includes [Windows and Unix versions of a simulator for the computer](http://www.mhhe.com/engcs/compsci/patt/lc2unix.mhtml).  I couldn't get the Unix version to run on my system, and I didn't want to dual-boot just for that, so I decided to write a JavaScript simulator.  And so I built [lc2.js](http://blog.pr4tt.com/lc2.js).
 
 # Technology
 
-The simulated MMU in lc2.js uses typed arrays of unsigned 16-bit integers to model the memory.  In order to minimize wasted memory, each page (??? memory addresses) are only initialized when they are first read/written.  For any reasonably program, lc2.js will only initialize 3 pages of memory.  The first and last pages contain OS code, and user code exists in the page starting with address 0x3000 by convention.  This means that it only uses ??? of browser memory.
+The simulated MMU in lc2.js uses typed arrays of unsigned 16-bit integers to model the memory.  In order to minimize wasted memory, each page (9 bit index, 20 512 memory addresses) are only initialized when they are first read/written.  For any reasonably program, lc2.js will only initialize 3 pages of memory.  The first and last pages contain OS code, and user code exists in the page starting with address 0x3000 by convention.  This means that lc2.js normally only uses 3kb of browser memory, rather than the full 131 kb (2<sup>16</sup> = 65536 memory locations, each of which is 2 bytes).
 
 I wrote lc2.js in a test-driven way.  I began by specifying a series of [unit tests in QUnit](http://blog.pr4tt.com/lc2.js/tests/index.html), and then worked backwards from there to make the tests pass with minimal code changes.  It worked well enough, but there was at least one instance where I wrote a wrong test, and only caught it when I was trying to run a real program.
 
