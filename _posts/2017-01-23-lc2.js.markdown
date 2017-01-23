@@ -1,0 +1,22 @@
+---
+published: false
+title: lc2.js - an LC-2 Simulator in JS
+layout: post
+tags: [OS, unix, BSD, memory, virtual memory, linux, solaris, sunos, openindiana]
+---
+
+The book "Introduction to Computing Systems: from Bits & Gates to C & Beyond" introduces in some detail a computer called LC-2.  This computer never physically existed, but the publisher's website includes [Windows and Unix versions of a simulator for the computer](http://www.mhhe.com/engcs/compsci/patt/lc2unix.mhtml).  Naturally, I felt that a JavaScript version was necessary.  And so I built [lc2.js](http://blog.pr4tt.com/lc2.js).
+
+# A Live Example
+
+An example, live?
+
+# Technology
+
+The simulated MMU in lc2.js uses typed arrays of unsigned 16-bit integers to model the memory.  In order to minimize wasted memory, each page (??? memory addresses) are only initialized when they are first read/written.  For any reasonably program, lc2.js will only initialize 3 pages of memory.  The first and last pages contain OS code, and user code exists in the page starting with address 0x3000 by convention.  This means that it only uses ??? of browser memory.
+
+I wrote lc2.js in a test-driven way.  I began by specifying a series of [unit tests in QUnit](http://blog.pr4tt.com/lc2.js/tests/index.html), and then worked backwards from there to make the tests pass with minimal code changes.  It worked well enough, but there was at least one instance where I wrote a wrong test, and only caught it when I was trying to run a real program.
+
+# Project Future
+
+The book that defines LC-2 has a gap.  In one chapter, we are using LC-2 assembly, and in the next we are using C.  I would like to use lc2.js to bridge that gap.  I think it would be interesting to build a Forth on top of lc2.js, and use that to bootstrap a simple Lisp dialect.
