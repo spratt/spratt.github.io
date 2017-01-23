@@ -5,11 +5,11 @@ layout: post
 tags: [JavaScript, js, Assembly, asm, LC-2, QUnit]
 ---
 
-The book "Introduction to Computing Systems: from Bits & Gates to C & Beyond" introduces in some detail a computer called LC-2.  This computer never physically existed, but the publisher's website includes [Windows and Unix versions of a simulator for the computer](http://www.mhhe.com/engcs/compsci/patt/lc2unix.mhtml).  I couldn't get the Unix version to run on my system, and I didn't want to dual-boot just for that, so I decided to write a JavaScript simulator.  And so I built [lc2.js](http://blog.pr4tt.com/lc2.js).
+The book ["Introduction to Computing Systems: from Bits & Gates to C & Beyond" by Patt & Patel](https://www.amazon.ca/Introduction-Computing-Systems-Gates-Beyond/dp/0072376902/) introduces in some detail a computer called LC-2.  This computer never physically existed, but the publisher's website includes [Windows and Unix versions of a simulator for the computer](http://www.mhhe.com/engcs/compsci/patt/lc2unix.mhtml).  I couldn't get the Unix version to run on my system, and I didn't want to dual-boot just for that, so I decided to write a JavaScript simulator.  And so I built [lc2.js](http://blog.pr4tt.com/lc2.js).
 
 # About the LC-2
 
-The LC-2 is a 16-bit CPU with 8 general-purpose registers, 2 special purpose registers: PC, which stores the memory address of the next instruction to be loaded; and IR, which stores the most recently loaded instruction.  Additionally, the LC-2's memory management unit (MMU) has 2 additional registers: MAR, which stores an address in memory; and MDR, which stores the data at that address in memory.  These registers are used to read and write to memory.
+The [LC-2](http://www.cs.utexas.edu/users/fussell/courses/cs310h/simulator/lc2.pdf) is a 16-bit CPU with 8 general-purpose registers (r0 to r7), 2 special purpose registers: PC, which stores the memory address of the next instruction to be loaded; and IR, which stores the most recently loaded instruction.  Additionally, the LC-2's memory management unit (MMU) has 2 additional registers: MAR, which stores an address in memory; and MDR, which stores the data at that address in memory.  These registers are used to read and write to memory.
 
 # Technology
 
@@ -19,4 +19,4 @@ I wrote lc2.js in a test-driven way.  I began by specifying a series of [unit te
 
 # Project Future
 
-The book that defines LC-2 has a gap.  In one chapter, we are using LC-2 assembly, and in the next we are using C.  I would like to use lc2.js to bridge that gap.  I think it would be interesting to build a Forth on top of lc2.js, and use that to bootstrap a simple Lisp dialect.
+The book that defines LC-2 has a gap.  In one chapter, we are using LC-2 assembly, and in the next we are using C.  I would like to use lc2.js to bridge that gap.  I think it would be interesting to build a [Forth](https://en.wikipedia.org/wiki/Forth_(programming_language)) on top of lc2.js, and use that to bootstrap a simple [Lisp](https://en.wikipedia.org/wiki/Lisp_(programming_language)) dialect.
