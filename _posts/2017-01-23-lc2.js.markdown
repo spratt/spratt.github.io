@@ -2,7 +2,7 @@
 published: true
 title: lc2.js - an LC-2 Simulator in JS
 layout: post
-tags: [OS, unix, BSD, memory, virtual memory, linux, solaris, sunos, openindiana]
+tags: [JavaScript, js, Assembly, asm, LC-2, QUnit]
 ---
 
 The book "Introduction to Computing Systems: from Bits & Gates to C & Beyond" introduces in some detail a computer called LC-2.  This computer never physically existed, but the publisher's website includes [Windows and Unix versions of a simulator for the computer](http://www.mhhe.com/engcs/compsci/patt/lc2unix.mhtml).  I couldn't get the Unix version to run on my system, and I didn't want to dual-boot just for that, so I decided to write a JavaScript simulator.  And so I built [lc2.js](http://blog.pr4tt.com/lc2.js).
