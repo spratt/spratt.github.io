@@ -5,7 +5,7 @@ layout: post
 tags: [go, golang, Assembly, asm, goasm]
 ---
 
-Recently, I've been learning [Go](https://golang.org/).  One thing I've learned is that [the Go compiler generates its own assembly language](https://golang.org/doc/asm).  There's [a great talk by Rob Pike about it](https://www.youtube.com/watch?v=KINIAgRpkDA).  While I was learning, I began to wish there was a tool similar to [the Compiler Explorer (more commonly referred to as Godbolt)](https://godbolt.org/), but for Go assembly.  So I built a [Go assembly generator](https://goasm.herokuapps.com).
+Recently, I've been learning [Go](https://golang.org/).  One thing I've learned is that [the Go compiler generates its own assembly language](https://golang.org/doc/asm).  There's [a great talk by Rob Pike about it](https://www.youtube.com/watch?v=KINIAgRpkDA).  While I was learning, I began to wish there was a tool similar to [the Compiler Explorer (more commonly referred to as Godbolt)](https://godbolt.org/), but for Go assembly.  So I built a [goasm, a Go assembly generator](https://goasm.herokuapps.com).
 
 # Details
 
