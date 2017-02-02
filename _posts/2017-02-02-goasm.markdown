@@ -11,7 +11,7 @@ Recently, I've been learning [Go](https://golang.org/).  One thing I've learned 
 
 The design is straightforward.  It prints the Go code to a temporary file, and then compiles it (sending the output object file to /dev/null).  One lesson I learned was that if you send an XMLHTTPRequest using JavaScript, and your form data is encoded as a FormData object, this is received by the back-end as multi-part form data.  This threw me off at first, because simply submitting the form doesn't do this.
 
-I deployed the app on [Heroku], since they [support Go apps]().  Normally, Go is only available on your Heroku dyno while building your app, but I used [jpillora's custom heroku Go buildpack], because it keeps Go in the run environment.  Jpillora built this in order to build the pretty neat [cloud-gox](https://gox.jpillora.com) tool.
+I deployed the app on [Heroku](https://www.heroku.com), since they [support Go apps](https://www.heroku.com/go).  Normally, Go is only available on your Heroku dyno while building your app, but I used [jpillora's custom heroku Go buildpack], because it keeps Go in the run environment.  Jpillora built this in order to build the pretty neat [cloud-gox](https://gox.jpillora.com) tool.
 
 # Future
 
