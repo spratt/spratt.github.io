@@ -1,0 +1,20 @@
+---
+published: true
+title: goasm - a Go assembly generator
+layout: post
+tags: [go, golang, Assembly, asm, goasm]
+---
+
+Recently, I've been learning [Go](https://golang.org/).  One thing I've learned is that [the Go compiler generates its own assembly language](https://golang.org/doc/asm).  There's [a great talk by Rob Pike about it](https://www.youtube.com/watch?v=KINIAgRpkDA).  While I was learning, I began to wish there was a tool similar to [the Compiler Explorer (more commonly referred to as Godbolt)](https://godbolt.org/), but for Go assembly.  So I built a [Go assembly generator](https://goasm.herokuapps.com).
+
+# Details
+
+The design is straightforward.  It prints the Go code to a temporary file, and then compiles it (sending the output object file to /dev/null).  One lesson I learned was that if you send an XMLHTTPRequest using JavaScript, and your form data is encoded as a FormData object, this is received by the back-end as multi-part form data.  This threw me off at first, because simply submitting the form doesn't do this.
+
+I deployed the app on [Heroku], since they [support Go apps]().  Normally, Go is only available on your Heroku dyno while building your app, but I used [jpillora's custom heroku Go buildpack], because it keeps Go in the run environment.  Jpillora built this in order to build the pretty neat [cloud-gox](https://gox.jpillora.com) tool.
+
+# Future
+
+I would like to implement setting arbitrary GOOS and GOARCH variables.  It would be very easy, except that [Go doesn't yet support specifying an environment variable for a single command](https://github.com/golang/go/issues/12868).
+
+Right now, the output is taken raw from the output of the Go compiler.  I'd like to parse the output for just the assembly code, and make it look much more like Godbolt.
