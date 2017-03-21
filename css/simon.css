@@ -1,0 +1,66 @@
+/* Use the more intuitive border-box sizing */
+* {
+    -webkit-box-sizing: border-box;
+       -moz-box-sizing: border-box;
+            box-sizing: border-box;
+}
+body {
+    font-family: "Merriweather", "PT Serif", Georgia, "Times New Roman", serif;
+    background-color: #fffffa;
+    color: #000005;
+}
+.site-wrap {
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+@media screen and (max-width: 48rem) {
+    .site-wrap {
+        /* not sure what to put here */
+    }
+}
+@media screen and (min-width: 48rem) {
+    .site-wrap {
+        max-width: 48rem;
+        margin: 0 auto;
+    }
+}
+.site-header {
+    font-size: 1.5rem;
+}
+article p {
+    text-align: justify;
+    line-height: 1.5rem;
+}
+a {
+    text-decoration: none;
+    color: #23c;
+}
+a:hover {
+    text-decoration: underline;
+}
+.site-nav {
+    padding-bottom: 1rem;
+}
+.left, .prev {
+    float: left;
+}
+.right, .next {
+    float: right;
+}
+.clearfix:before, .clearfix:after {
+    content: " ";
+    display: table;
+}
+.clearfix:after {
+    clear: both;
+}
+footer {
+    margin-top: 1rem;
+    margin-bottom: 2rem;
+}
+.post {
+    margin-bottom: 2rem;
+}
+.post-link > * {
+    display: inline;
+}

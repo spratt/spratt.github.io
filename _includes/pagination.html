@@ -3,14 +3,14 @@
     {% if paginator.next_page %}
       <a class="pagination-item" href="{{ paginator.next_page_path }}">Older</a>
     {% else %}
-      <span class="pagination-item disabled">Older</span>
+      <span class="pagination-item disabled">&nbsp;</span>
     {% endif %}
   </div>
   <div class="right">
     {% if paginator.previous_page %}
       <a class="pagination-item" href="{{ paginator.previous_page_path }}">Newer</a>
     {% else %}
-      <span class="pagination-item disabled">Newer</span>
+      <span class="pagination-item disabled">&nbsp;</span>
     {% endif %}
   </div>
 </div>

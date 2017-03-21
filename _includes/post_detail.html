@@ -1,14 +1,15 @@
 <nav class="prev-next">
-  {% if post.previous.url %}<a class="prev" href="{{ post.previous.url }}">&lt; {{ post.previous.title }}</a>
+  {% if post.previous.url %}<a class="prev" href="{{ post.previous.url }}">← {{ post.previous.title }}</a>
   {% else %}
   <a class="prev"></a>
   {% endif %}
-  {% if post.next.url %}<a class="next" href="{{ post.next.url }}">{{ post.next.title }} &gt;</a>{% endif %}
+  {% if post.next.url %}<a class="next" href="{{ post.next.url }}">{{ post.next.title }} →</a>{% endif %}
 </nav>
+<div class="clearfix"></div>
 
-<div class="post-header mb2">
+<div class="post-header">
   <a href="{{ post.url }}">
-    <h1 class="py2">{% if page.title %}{{ page.title }}{% else %}{{ post.title }}{% endif %}</h1>
+    <h1>{% if page.title %}{{ page.title }}{% else %}{{ post.title }}{% endif %}</h1>
   </a>
   <span class="post-meta">{% if page.date %}{{ page.date | date: "%b %-d, %Y" }}{% else %}{{ post.date | date: "%b %-d, %Y" }}{% endif %}</span>
 </div>
@@ -18,9 +19,9 @@
 </article>
 
 <nav class="prev-next">
-  {% if post.previous.url %}<a class="prev" href="{{ post.previous.url }}">&lt; {{ post.previous.title }}</a>
+  {% if post.previous.url %}<a class="prev" href="{{ post.previous.url }}">← {{ post.previous.title }}</a>
   {% else %}
   <a class="prev"></a>
   {% endif %}
-  {% if post.next.url %}<a class="next" href="{{ post.next.url }}">{{ post.next.title }} &gt;</a>{% endif %}
+  {% if post.next.url %}<a class="next" href="{{ post.next.url }}">{{ post.next.title }} →</a>{% endif %}
 </nav>
